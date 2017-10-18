@@ -15,6 +15,7 @@ RSpec.describe 'Todos API', type: :request do
     it 'returns todos' do
       # Note `json` is a custom helper to parse JSON responses
       expect(json).not_to be_empty
+      # p json
       expect(json.size).to eq(10)
     end
 
@@ -24,9 +25,10 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'GET /todos/:id' do
-    before {get "/todo/#{:todo_id}"}
+    before {get "/todos/#{todo_id}"}
 
     context 'when the record exists' do
+
       it 'returns the todo' do
         expect(json).not_to be_empty
         expect(json['id']).to eq(todo_id)
@@ -41,7 +43,7 @@ RSpec.describe 'Todos API', type: :request do
       let (:todo_id) { 100 }
 
       it 'returns an error 404' do
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
@@ -66,10 +68,10 @@ RSpec.describe 'Todos API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before {post'/todos', params:{title: 'Foobar'}}
+      before { post '/todos', params: {title: 'Foobar'} }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
       end
 
       it 'returns a valid failure message' do
@@ -86,7 +88,7 @@ RSpec.describe 'Todos API', type: :request do
       before{ put "/todos/#{todo_id}", params: valid_attributes }
 
       it 'updates the record' do
-        expect(response.body).to_be empty
+        expect(response.body).to be_empty
       end
 
       it 'returns status code 204' do
@@ -97,7 +99,7 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'DELETE /todos' do
-    before { delete "/todos/#{id}" }
+    before { delete "/todos/#{todo_id}" }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
